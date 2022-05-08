@@ -20,7 +20,7 @@ seeding:
 	go run cmd/seeding/main.go
 
 initdb:
-	docker exec -it postgres_local psql -U postgres -c "CREATE DATABASE app_api"
+	docker exec -it postgres-local psql -U postgres -c "CREATE DATABASE app_api"
 
 generate:
 	go generate ./...
