@@ -1,34 +1,25 @@
 package db
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
 
-	"app-api/configs"
-	"app-api/ent"
+	"golang-base/configs"
 
-	"entgo.io/ent/dialect"
-	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var client *ent.Client
+var client *gorm.DB
+var err error
 
 // Open new DB connection
-func newClient(databaseUrl string) *ent.Client {
-	db, err := sql.Open("pgx", databaseUrl)
-	if err != nil {
-		panic(err)
-	}
-
-	// Create an ent.Driver from `db`.
-	drv := entsql.OpenDB(dialect.Postgres, db)
-	return ent.NewClient(ent.Driver(drv))
+func newClient(databaseUrl string) (*gorm.DB, error) {
+	return gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
 }
 
-func GetClient() *ent.Client {
+func GetClient() *gorm.DB {
 	if client == nil {
 		dsn := fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -38,9 +29,9 @@ func GetClient() *ent.Client {
 			configs.Database.Name,
 			configs.Database.Port,
 		)
-		client = newClient(dsn)
-		if err := client.Schema.Create(context.Background()); err != nil {
-			logrus.Fatal("opening ent client", err)
+		client, err = newClient(dsn)
+		if err != nil {
+			panic(err)
 		}
 		logrus.Info("Database connected successfully")
 	}

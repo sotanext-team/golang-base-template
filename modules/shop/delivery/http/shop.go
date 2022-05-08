@@ -1,49 +1,65 @@
 package http
 
 import (
+	"strconv"
 	"time"
 
-	"app-api/ent"
-	"app-api/modules/shop/usecase"
-	"app-api/pkg/oauth2client"
-
-	authz "github.com/es-hs/authzclient"
-	"google.golang.org/grpc"
+	"golang-base/models"
+	"golang-base/modules/shop/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type ShopHandler struct {
 	shopUseCase usecase.ShopUseCase
 }
 
-func NewShopHandler(dbEnt *ent.Client, accountConnection *grpc.ClientConn) ShopHandler {
-	shopUseCase := usecase.NewShopUseCase(dbEnt, accountConnection)
+func NewShopHandler(db *gorm.DB) ShopHandler {
+	shopUseCase := usecase.NewShopUseCase(db)
 	return ShopHandler{
 		shopUseCase: shopUseCase,
 	}
 }
 
 func (instance *ShopHandler) ShopRegister(c *gin.Context) {
-	// var shop models.ShopInput
-	// err := c.ShouldBindJSON(&shop)
-	// if err != nil {
-	// 	c.JSON(400, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// shopResult, err := instance.shopUseCase.ShopRegister(shop)
-	// if err != nil {
-	// 	c.JSON(400, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// c.JSON(200, gin.H{"data": shopResult})
+	var shop models.Shop
+	err := c.ShouldBindJSON(&shop)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	shopResult, err := instance.shopUseCase.CreateShop(c.Request.Context(), shop)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"data": shopResult})
 }
 
-func (instance *ShopHandler) ShopLogin(c *gin.Context) {
-	shopDomain := c.Query("default_domain")
-	authURL := oauth2client.ClientConf.AuthCodeURL("some-random-state") + "&audience=es-app-api-real" + "&nonce=" + shopDomain
-	c.Redirect(301, authURL)
+func (instance *ShopHandler) List(c *gin.Context) {
+	shopResult, err := instance.shopUseCase.GetShops(c.Request.Context())
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"data": shopResult})
+}
+
+func (instance *ShopHandler) Get(c *gin.Context) {
+	shopID := c.Param("shop_id")
+	number, err := strconv.ParseUint(shopID, 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	shopResult, err := instance.shopUseCase.GetShop(c.Request.Context(), number)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"data": shopResult})
 }
 
 func (instance *ShopHandler) TestPermission(c *gin.Context) {
@@ -138,8 +154,6 @@ func (instance *ShopHandler) TestPermission(c *gin.Context) {
 
 	// test speed
 	t1 := time.Now()
-	logrus.Info(authz.GetImplicitRolesInDomain(1, 1))
-	logrus.Info(authz.GetImplicitRolesInDomain(1, 2))
 
 	// logrus.Info(e.Enforce("admin", "shop_1", "product", "read"))
 	// logrus.Info(e.Enforce("user_1", "shop_1", "product", "write"))

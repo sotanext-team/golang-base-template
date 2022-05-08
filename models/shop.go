@@ -8,11 +8,11 @@ type Shop struct {
 	CustomDomain  string `json:"customDomain" `
 	ShopName      string `json:"shopName" `
 
-	Users          []*User          `json:"users" gorm:"many2many:user_shops"`
-	ShopMetas      []*ShopMeta      `json:"shopMetas"`
-	ShopEvents     []*ShopEvent     `json:"shopEvents"`
-	Themes         []*Theme         `json:"theme"`
-	ThemeTemplates []*ThemeTemplate `json:"themeTemplates"`
+	// Users          []*User          `json:"users" gorm:"many2many:user_shops"`
+	// ShopMetas      []*ShopMeta      `json:"shopMetas"`
+	// ShopEvents     []*ShopEvent     `json:"shopEvents"`
+	// Themes         []*Theme         `json:"theme"`
+	// ThemeTemplates []*ThemeTemplate `json:"themeTemplates"`
 }
 
 type ShopToken struct {

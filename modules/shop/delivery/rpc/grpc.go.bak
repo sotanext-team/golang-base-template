@@ -3,11 +3,9 @@ package rpc
 import (
 	"context"
 
-	"app-api/ent"
-	"app-api/models"
-	shopUsecase "app-api/modules/shop/usecase"
+	"golang-base/models"
+	shopUsecase "golang-base/modules/shop/usecase"
 
-	esUtils "github.com/es-hs/es-helper/utils"
 
 	pb "github.com/es-hs/erpc/app-api"
 	"github.com/sirupsen/logrus"

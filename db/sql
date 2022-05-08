@@ -1,9 +1,0 @@
-INSERT INTO public.products (created_at,updated_at,deleted_at,title) VALUES
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,'IPAD PRO 11 INCH (2018) 64GB WIFI'),
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,'Macbook Air 2017 MQD32 (13.3 inch) - Hàng Chính Hãng');
-	 
-INSERT INTO public.product_variants (created_at,updated_at,deleted_at,product_id,title) VALUES
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,1,'Space Grey'),
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,1,'Silver'),
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,2,'13.3'),
-	 ('2019-07-22 10:42:05.000','2019-07-22 10:42:05.000',NULL,2,'15.6');

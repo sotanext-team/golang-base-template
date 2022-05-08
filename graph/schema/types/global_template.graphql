@@ -1,9 +1,0 @@
-type GlobalTemplate implements Node {
-	id: ID!
-	name: String!
-	viewCount: Int
-	installCount: Int
-	createdAt: Time
-	updatedAt: Time
-	shop: Shop @goField(forceResolver: true)
-}

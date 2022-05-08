@@ -3,23 +3,23 @@ package repository
 import (
 	"context"
 
-	"app-api/ent"
-	"app-api/models"
+	"golang-base/models"
+
+	"gorm.io/gorm"
 )
 
 type shopImpl struct {
-	dbEnt *ent.Client
+	db *gorm.DB
 }
 
-func NewShopRepository(dbEnt *ent.Client) ShopRepository {
+func NewShopRepository(db *gorm.DB) ShopRepository {
 	return &shopImpl{
-		dbEnt: dbEnt,
+		db: db,
 	}
 }
 
 type ShopRepository interface {
-	CreateShop(ctx context.Context, shop models.Shop) (models.Shop, error)
-	CreateShopRevert(ctx context.Context, shop models.Shop) error
-	GetShop(ctx context.Context, id uint64) (*ent.Shop, error)
-	GetShopByDomainE(ctx context.Context, domain string) (*ent.Shop, error)
+	CreateShop(ctx context.Context, shop models.Shop) (*models.Shop, error)
+	GetShop(ctx context.Context, id uint64) (*models.Shop, error)
+	GetShops(ctx context.Context) ([]models.Shop, error)
 }

@@ -1,25 +1,19 @@
 package http
 
 import (
-	"app-api/ent"
-	"app-api/middlewares"
-
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
+	"gorm.io/gorm"
 )
 
-func InitAPIShop(r *gin.RouterGroup, dbEnt *ent.Client, accountConnection *grpc.ClientConn) {
-	shopController := NewShopHandler(dbEnt, accountConnection)
+func InitAPIShop(r *gin.RouterGroup, db *gorm.DB) {
+	shopController := NewShopHandler(db)
 
 	// r.Use(middlewares.AuthenRequest())
 	// r.Use(middlewares.AuthenShopRequest())
-	r.GET("/login_shop", shopController.ShopLogin)
-	authShopRoutes := r.Group("/auth")
-	authShopRoutes.Use(middlewares.AuthenRequest())
+	shopRoutes := r.Group("/shops")
 	{
-		authShopRoutes.POST("/shop/register", shopController.ShopRegister)
-		authShopRoutes.POST("/shop/login/:shop-domain", shopController.ShopLogin)
+		shopRoutes.POST("/", shopController.ShopRegister)
+		shopRoutes.GET("/", shopController.List)
+		shopRoutes.GET("/:shop_id", shopController.Get)
 	}
-	testPermission := r.Group("/auth/")
-	testPermission.Use(middlewares.AuthenShopRequest())
 }
