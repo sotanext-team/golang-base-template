@@ -1,0 +1,36 @@
+{{ define "first_or_init" }}
+
+{{- /*gotype: entgo.io/ent/entc/gen.Graph*/ -}}
+
+{{ $pkg := base $.Config.Package }}
+{{- with extend $ "Package" $pkg }}
+        {{ template "header" . }}
+{{- end }}
+
+{{ template "import" $ }}
+
+{{- range $n := $.Nodes }}
+
+    // FirstOrInit returns the first {{ $n.Name }} entity from the query.
+    // Returns an empty object when no {{ $n.Name }} was found.
+    func(q *{{ $n.QueryName }}) FirstOrInit(ctx context.Context) (*{{ $n.Name }}, error) {
+        nodes, err := q.Limit(1).All(ctx)
+        if err != nil {
+            return nil, err
+        }
+        if len(nodes) == 0 {
+            return &{{ $n.Name }}{config: q.config}, nil
+        }
+        return nodes[0], nil
+    }
+
+    // FirstOrInitX is like FirstOrInit, but panics if an error occurs.
+    func(q *{{ $n.QueryName }}) FirstOrInitX(ctx context.Context) *{{ $n.Name }} {
+        node, err := q.FirstOrInit(ctx)
+        if err != nil {
+            panic(err)
+        }
+        return node
+    }
+{{- end }}
+{{ end }}

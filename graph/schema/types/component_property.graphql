@@ -1,0 +1,28 @@
+"""
+Define an object type and map it later to the generated Ent model.
+https://graphql.org/learn/schema/#object-types-and-fields
+"""
+type ComponentProperty {
+    id: ID!
+    createdAt: Time
+    updatedAt: Time
+    name: String!
+    value: String!
+}
+
+input CreateComponentPropertyInput {
+    componentID: ID!
+    name: String!
+    value: String!
+}
+
+input UpdateComponentPropertyInput {
+    name: String!
+    value: String!
+}
+
+extend type Mutation {
+	componentPropertyCreate(input: CreateComponentPropertyInput!): ComponentProperty!
+	componentPropertyUpdate(id: ID!, input: UpdateComponentPropertyInput!): ComponentProperty!
+	componentPropertyRemove(id: ID!): Boolean
+}

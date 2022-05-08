@@ -1,0 +1,23 @@
+version: "3.4"
+
+services:
+  database:
+    container_name: postgres_app_api
+    image: "postgres:13-alpine"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgbackups:/pgbackups
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/db
+    ports:
+      - ${DB_PORT}:5432
+volumes:
+  pgdata:
+  pgbackups:
+
+networks:
+  default:
+    external:
+      name: es-hs

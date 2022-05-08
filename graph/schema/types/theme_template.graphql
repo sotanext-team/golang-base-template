@@ -1,0 +1,94 @@
+type ThemeTemplateConnection {
+	totalCount: Int!
+	pageInfo: PageInfo!
+	edges: [ThemeTemplateEdge]
+}
+
+type ThemeTemplateEdge {
+	node: ThemeTemplate
+	cursor: Cursor!
+}
+
+enum ThemeTemplateOrderField {
+	CREATED_AT
+	NAME
+	PAGE_TYPE
+}
+
+input ThemeTemplateOrder {
+	direction: OrderDirection!
+	field: ThemeTemplateOrderField
+}
+
+type ThemeTemplate implements Node {
+	id: ID!
+	name: String!
+	pageType: PageType!
+	default: Boolean!
+	createdAt: Time
+	updatedAt: Time
+	theme: Theme @goField(forceResolver: true)
+	globalTemplate: GlobalTemplate @goField(forceResolver: true)
+}
+
+input CreateThemeTemplateInput {
+	name: String!
+	pageType: PageType!
+	themeId: Uint64!
+	"""
+	themeGlobalStyleId: Int
+	templateId: Int
+	"""
+	default: Boolean
+}
+
+input UpdateThemeTemplateInput {
+	name: String!
+	pageType: PageType!
+	themeId: Uint64!
+	"""
+	themeGlobalStyleId: Int
+	templateId: Int
+	"""
+	default: Boolean
+}
+
+extend type Query {
+	themeTemplates(
+		after: Cursor
+		first: Int
+		before: Cursor
+		last: Int
+		orderBy: ThemeTemplateOrder
+		where: ThemeTemplateWhereInput
+		pageType: PageType
+		themeId: Uint64!
+	): ThemeTemplateConnection
+	themeTemplatesTrash(
+		after: Cursor
+		first: Int
+		before: Cursor
+		last: Int
+		orderBy: ThemeTemplateOrder
+		where: ThemeTemplateWhereInput
+		pageType: PageType
+		themeId: Uint64!
+	): ThemeTemplateConnection
+	themeTemplate(id: Uint64!): ThemeTemplate
+}
+
+extend type Mutation {
+	themeTemplateCreate(themeTemplate: CreateThemeTemplateInput!): ThemeTemplate
+	themeTemplateUpdate(
+		id: Uint64!
+		themeTemplate: UpdateThemeTemplateInput!
+	): ThemeTemplate
+	themeTemplateDelete(id: Uint64!): String
+	themeTemplateDuplicate(id: Uint64!): ThemeTemplate
+	themeTemplateMakeDefault(id: Uint64!): ThemeTemplate
+	themeTemplateRestore(id: Uint64!): ThemeTemplate
+	themeTemplateForceDelete(id: Uint64!): String
+	themeTemplateMakeGlobal(id: Uint64!): GlobalTemplate
+	themeTemplateInsertFromGlobal(globalTemplateId: Uint64!): ThemeTemplate
+	themeTemplatePublish(id: Uint64!): ThemeTemplate
+}

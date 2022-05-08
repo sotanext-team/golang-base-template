@@ -1,0 +1,82 @@
+type ThemeConnection {
+	totalCount: Int!
+	pageInfo: PageInfo!
+	edges: [ThemeEdge]
+}
+
+type ThemeEdge {
+	node: Theme
+	cursor: Cursor!
+}
+
+"""
+The following enums are matched the entgql annotations in the ent/schema.
+"""
+enum ThemeOrderField {
+	CREATED_AT
+	NAME
+}
+
+input ThemeOrder {
+	direction: OrderDirection!
+	field: ThemeOrderField
+}
+
+"""
+Define an object type and map it later to the generated Ent model.
+https://graphql.org/learn/schema/#object-types-and-fields
+"""
+type Theme implements Node {
+	id: ID!
+	createdAt: Time
+	updatedAt: Time
+	name: String!
+	thumbnail: String
+	publish: Boolean
+	shop: Shop @goField(forceResolver: true)
+	themeTemplates: [ThemeTemplate] @goField(forceResolver: true)
+}
+
+"""
+Define an input type for the mutation below.
+https://graphql.org/learn/schema/#input-types
+
+Note that, this type is mapped to the generated
+input type in mutation_input.go.
+"""
+input CreateThemeInput {
+	name: String!
+	thumbnail: String
+	publish: Boolean
+}
+
+"""
+Define an input type for the mutation below.
+https://graphql.org/learn/schema/#input-types
+
+Note that, this type is mapped to the generated
+input type in mutation_input.go.
+"""
+input UpdateThemeInput {
+	name: String!
+	thumbnail: String
+}
+
+extend type Mutation {
+	themeInsertFromGlobal(globalThemeId: Int!): Theme!
+	themeDuplicate(id: Int!): Theme!
+	themeUpdate(id: Int!, theme: UpdateThemeInput!): Theme!
+	themeDelete(id: Int!): String
+	themeCreate(theme: CreateThemeInput!): Theme!
+}
+
+extend type Query {
+	themes(
+		after: Cursor
+		first: Int
+		before: Cursor
+		last: Int
+		orderBy: ThemeOrder
+		where: ThemeWhereInput
+	): ThemeConnection
+}
